@@ -6,14 +6,14 @@ class photon:
     self.axis=v
     self.pol=z
 
-    self.myarrow=arrow(pos=self.pos,axis=self.axis,color=color.yellow)
+    self.myarrow=arrow(pos=self.pos,axis=self.axis,color=color.red)
     self.wave=curve(self.pos+0.125*self.axis)
     for ix in range(21):
       wpos=self.pos
       wpos=wpos+(ix+5)/40*self.axis
       wpos=wpos+self.pol*sin(ix*2*pi/10)*exp(-(ix-10)**2/40)
       self.wave.append(wpos)
-    self.wave.color=color.yellow
+    self.wave.color=color.red
     self.wave.emissive=True
 
   def update(self,x):
@@ -23,7 +23,7 @@ class photon:
 x=vector(0,3,0)
 v=vector(0,-1,0)
 z=vector(1,0,0)
-scene=canvas()
+scene=canvas(background=color.white)
 scene.camera.pos=vector(4,3,1)
 #scene.center=vector(2,-2,0)
 #sphere(pos=x,radius=0.1)
