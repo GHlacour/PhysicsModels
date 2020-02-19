@@ -18,7 +18,7 @@ def roster(N,r):
 
 # Find potential energy
 @jit(nopython=True)
-def find_energy(q,R,N,Aw,Aa,B):
+def find_energy(q,R,N,Aw,Aa,B,C):
   E=0
   # Find interaction energy between praticles
   for ii in range(N):
@@ -27,6 +27,9 @@ def find_energy(q,R,N,Aw,Aa,B):
       dy=q[ii,1]-q[jj,1]
       dist=np.sqrt(dx**2+dy**2)
       E=E+Aa*np.exp(-dist/B)
+      dist2=dist*dist
+      dist6=dist2*dist2*dist2
+      E=E-C/dist6
 
   # Find wall-particle energy
   for ii in range(N):
@@ -55,7 +58,7 @@ def find_kinetic(p,m):
 
 # Calculate the forces
 @jit(nopython=True)
-def find_forces(q,r,N,Aw,Aa,B):
+def find_forces(q,r,N,Aw,Aa,B,C):
   F=np.zeros((N,2))
   P=0
   # Forces between particles
@@ -67,6 +70,11 @@ def find_forces(q,r,N,Aw,Aa,B):
         dist=np.sqrt(dx**2+dy**2)
         F[ii,0]=F[ii,0]+Aa*np.exp(-dist/B)*dx/dist/B
         F[ii,1]=F[ii,1]+Aa*np.exp(-dist/B)*dy/dist/B
+        dist2=dist*dist
+        dist4=dist2*dist2
+        dist8=dist4*dist4
+        F[ii,0]=F[ii,0]-C*dx/dist8*6
+        F[ii,1]=F[ii,1]-C*dy/dist8*6
 
   # Forces with walls
   for ii in range(N):

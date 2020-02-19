@@ -4,17 +4,18 @@ import subroutines as sr
 import time as dotime
 
 # Main Program
-def dynamics2D(N,r,Temp,times):
+def dynamics2D(N,r,Temp,times,fixed_T):
   start = dotime.process_time()
   print('The number density is ' + str(N/r**2) + ' 1/nm^2.')
   m=18; # Mass in a.m.u.
-  R=8.3144598e-1 # Gas constant kJ/mol/K
+  R=8.3144598e-3 # J/mol/K Gas constant
   dt=0.005 # Timestep in ps
   Aw=180000 # kJ/mol Particle-wall repulsion Aw*exp(-dq/B)
   Aa=180000 # kJ/mol Particle-Particle repulsion Aa*exp(-dq/B)
   B=0.025 # nm 
-  fixed_T=0 # Use fixed temperature when 1
+  # fixed_T=0 # Use fixed temperature when 1
   fast=10 # Make plots every timestep spaced by fast (0 is no plots)
+  N=int(np.floor(np.sqrt(N))**2) # Make number of particels a square number
   q=sr.roster(N,r) 
   Epot=sr.find_energy(q,r,N,Aw,Aa,B)
   # Initialize momenta
@@ -64,6 +65,10 @@ def dynamics2D(N,r,Temp,times):
   sr.velocity_histogram(ps)
 
 # Settings
-# Number of atoms, size of box, temperature, length of trajectory
-dynamics2D(100,10,300,10000)
+# Number of atoms, size of box, temperature, length of trajectory, fixed T
+#dynamics2D(1,30,300,1000,0)
+dynamics2D(81,30,300,10000,0)
+#dynamics2D(81,30,300,10000,1)
+#dynamics2D(900,30,300,10000,1)
+
 

@@ -2,6 +2,7 @@ import numpy as np
 from numba import jit
 import matplotlib.pyplot as plt
 # These are subroutines for molecular dynamics
+# This version includes the attractive forces
 
 # Put atoms on a grid
 def roster(N,r):
@@ -18,15 +19,18 @@ def roster(N,r):
 
 # Find potential energy
 @jit(nopython=True)
-def find_energy(q,R,N,Aw,Aa,B):
+def find_energy(q,R,N,Aw,Aa,B,C):
   E=0
-  # Find interaction energy between praticles
+  # Find interaction energy between particles
   for ii in range(N):
     for jj in range(ii+1,N):
       dx=q[ii,0]-q[jj,0]
       dy=q[ii,1]-q[jj,1]
       dist=np.sqrt(dx**2+dy**2)
+      dist2=dist*dist
+      dist6=dist2*dist2*dist2
       E=E+Aa*np.exp(-dist/B)
+      E=E-C/dist6
 
   # Find wall-particle energy
   for ii in range(N):
@@ -41,9 +45,8 @@ def find_energy(q,R,N,Aw,Aa,B):
 def scale_velocity(N,p,m,Temp):
   R=8.3144598e-3 # J/mol/K Gas constant
   Ekin=find_kinetic(p,m)
-  Ekin0=2*N*R*Temp/2
-#  print(str(Ekin) +' '+ str(Ekin0)+' '+str(N))
-# Scale momenta
+  Ekin0=2*N*R*Temp/2;
+  # Scale momenta
   p=p*np.sqrt(Ekin0/Ekin)
   return p
 
@@ -55,7 +58,7 @@ def find_kinetic(p,m):
 
 # Calculate the forces
 @jit(nopython=True)
-def find_forces(q,r,N,Aw,Aa,B):
+def find_forces(q,r,N,Aw,Aa,B,C):
   F=np.zeros((N,2))
   P=0
   # Forces between particles
@@ -65,8 +68,13 @@ def find_forces(q,r,N,Aw,Aa,B):
         dx=q[ii,0]-q[jj,0]
         dy=q[ii,1]-q[jj,1]
         dist=np.sqrt(dx**2+dy**2)
+        dist2=dist*dist
+        dist4=dist2*dist2
+        dist8=dist4*dist4
         F[ii,0]=F[ii,0]+Aa*np.exp(-dist/B)*dx/dist/B
         F[ii,1]=F[ii,1]+Aa*np.exp(-dist/B)*dy/dist/B
+        F[ii,0]=F[ii,0]-C*dx/dist8*6
+        F[ii,1]=F[ii,1]-C*dy/dist8*6
 
   # Forces with walls
   for ii in range(N):
@@ -74,12 +82,12 @@ def find_forces(q,r,N,Aw,Aa,B):
     F[ii,0]=F[ii,0]-Aw*np.exp(-(r-q[ii,0])/B)/B
     F[ii,1]=F[ii,1]+Aw*np.exp(-q[ii,1]/B)/B
     F[ii,1]=F[ii,1]-Aw*np.exp(-(r-q[ii,1])/B)/B
-    P=P+Aw*(np.exp(-q[ii,0]/B)+np.exp(-(r-q[ii,0])/B)+np.exp(-q[ii,1]/B)+np.exp(-(r-q[ii,1])/B))/B/4/r
+    P=P+Aw*(np.exp(-q[ii,0]/B)+Aw*np.exp(-(r-q[ii,0])/B)+np.exp(-q[ii,1]/B)+Aw*np.exp(-(r-q[ii,1])/B))
   return (F,P)
 
 # Plot miscrostate
 def plot_state(q,r):
-  plt.figure(1,figsize=(10,10))
+  plt.figure(1)
   plt.clf()
   # Make particle 0 blue
   plt.plot(q[0,0],q[0,1],'bo')
@@ -91,18 +99,18 @@ def plot_state(q,r):
   plt.xlabel('x-axis (nm)',fontsize=18)
   plt.ylabel('y-axis (nm)',fontsize=18)
   plt.draw()
-  plt.pause(0.000001)
+  plt.pause(0.0001)
 
 # Plot physical variables
 def plot_variables(t,Epot,Ekin,P,R,V,N):
-  plt.figure(2,figsize=(10,10))
+  plt.figure(2)
   plt.plot(t,Epot,t,Ekin,t,Epot+Ekin)
   plt.title('Energies',fontsize=18)
   plt.xlabel('Time (ps)',fontsize=18)
   plt.ylabel('Energy (kJ/mol)',fontsize=18)
   plt.legend(('Potential','Kinetic','Total'),fontsize=18)
   plt.draw()
-  plt.figure(3,figsize=(10,10))
+  plt.figure(3)
   plt.subplot(2,2,1)
   plt.plot(t,P)
   plt.xlabel('Time (ps)',fontsize=18)
@@ -126,28 +134,20 @@ def plot_variables(t,Epot,Ekin,P,R,V,N):
   # Exclude initial timesteps from further analysis
   start=50 
   # Make histograms skipping #start first points
-  plt.figure(4,figsize=(10,10))
+  plt.figure(4)
   plt.subplot(2,2,1)
   plt.hist(P[start:],100)
   plt.xlabel('Pressure (kJ/mol/nm$^2$)',fontsize=18)
-  mytext='<P>=%.2f $\pm$ %.2f kJ/mol/nm$^2$' %(np.mean(P[start:]),np.std(P[start:])) 
-  plt.title(mytext)
   plt.subplot(2,2,2)
   plt.hist(T[start:],100)
   plt.xlabel('Temperature (K)',fontsize=18)
-  mytext='<T>=%.2f $\pm$ %.2f K' %(np.mean(T[start:]),np.std(T[start:]))
-  plt.title(mytext)
   plt.subplot(2,2,3)
   plt.hist(PVNRT[start:],100)
   plt.xlabel('PVNRT',fontsize=18)
-  mytext='<PVNRT>=%.2f $\pm$ %.2f' %(np.mean(PVNRT[start:]),np.std(PVNRT[start:]))
-  plt.title(mytext)
   plt.subplot(2,2,4)
   E=Ekin+Epot
   plt.hist(E[start:],100)
   plt.xlabel('Energy (kJ/mol)',fontsize=18)
-  mytext='<E>=%.2f $\pm$ %.2f kJ/mol' %(np.mean(E[start:]),np.std(E[start:]))
-  plt.title(mytext)
   plt.tight_layout()
   plt.show()
 
@@ -158,10 +158,8 @@ def velocity_histogram(ps):
   p1=ps[:,0]*ps[:,0]+ps[:,1]*ps[:,1]
   # print(ps.size)
   p=np.sqrt(p1)
-  plt.figure(2,figsize=(10,10))
+  plt.figure(2)
   plt.hist(p[start:],100)
   plt.xlabel('Momentum (u nm/ps)',fontsize=18)
   plt.ylabel('Occurences',fontsize=18)
-  mytext='<p>=%.2f $\pm$ %.2f u nm/ps' %(np.mean(p[start:]),np.std(p[start:]))
-  plt.title(mytext)
   plt.show()
