@@ -11,7 +11,7 @@ def dynamics2D(N,r,Temp,times,fixed_T):
   R=8.3144598e-3 # J/mol/K Gas constant
   dt=0.005 # Timestep in ps
   Aw=180000 # kJ/mol Particle-wall repulsion Aw*exp(-dq/B)
-  Aa=180000 # kJ/mol Particle-Particle repulsion Aa*exp(-dq/B)
+  Aa=0*180000 # kJ/mol Particle-Particle repulsion Aa*exp(-dq/B)
   B=0.025 # nm 
   # fixed_T=0 # Use fixed temperature when 1
   fast=0 # Make plots every timestep spaced by fast (0 is no plots)

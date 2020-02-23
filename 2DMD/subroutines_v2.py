@@ -132,7 +132,7 @@ def plot_variables(t,Epot,Ekin,P,R,V,N):
   plt.tight_layout()
   plt.draw()
   # Exclude initial timesteps from further analysis
-  start=50 
+  start=500
   # Make histograms skipping #start first points
   plt.figure(4,figsize=(10,10))
   plt.subplot(2,2,1)

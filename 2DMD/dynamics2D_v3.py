@@ -15,7 +15,7 @@ def dynamics2D(N,r,Temp,times,fixed_T):
   B=0.025 # nm 
   C=0.0024 # kJ/mol/nm^6
   fixed_T=1 # Use fixed temperature when 1
-  fast=10 # Make plots every timestep spaced by fast (0 is no plots)
+  fast=0 # Make plots every timestep spaced by fast (0 is no plots)
   q=sr.roster(N,r) 
   Epot=sr.find_energy(q,r,N,Aw,Aa,B,C)
   # Initialize momenta
@@ -66,5 +66,11 @@ def dynamics2D(N,r,Temp,times,fixed_T):
 
 # Settings
 # Number of atoms, size of box, temperature, length of trajectory, fixed_T
-dynamics2D(900,30,300,10000,1)
-
+#dynamics2D(900,30,300,10000,1)
+dynamics2D(900,30,310,10000,1)
+#dynamics2D(900,30*np.sqrt(1.0/0.1),300,10000,1)
+#dynamics2D(900,30*np.sqrt(1.0/0.4),300,10000,1)
+#dynamics2D(900,30*np.sqrt(1.0/0.7),300,10000,1)
+#dynamics2D(900,30*np.sqrt(1.0/10),300,10000,1)
+#dynamics2D(900,30*np.sqrt(1.0/3),300,10000,1)
+#dynamics2D(900,30*np.sqrt(1.0/1.5),300,10000,1)
