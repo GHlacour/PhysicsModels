@@ -20,7 +20,7 @@ def dynamics2D(N,r,Temp,times):
   # Initialize momenta
   p=np.random.normal(loc=0,scale=1,size=(N,2))
   #  print(p)
-  # Scale momenta to get right kinetci energy
+  # Scale momenta to get right kinetic energy
   p=sr.scale_velocity(N,p,m,Temp)
   # Initialize arrays
   Ekin=np.zeros(times)

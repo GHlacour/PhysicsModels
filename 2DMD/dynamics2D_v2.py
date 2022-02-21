@@ -4,7 +4,14 @@ import subroutines as sr
 import time as dotime
 
 # Main Program
-def dynamics2D(N,r,Temp,times,fixed_T):
+# N number of particles
+# r length of one side in nm
+# Temp temperature in Kelvin
+# times number of snapshots to calculate
+# fixed_T 1 is fixed 0 is fluctuating
+# fast number of snapshots between plot on screen 100 give nice animation
+#   0 is no plots at all during simulation
+def dynamics2D(N,r,Temp,times,fixed_T,fast):
   start = dotime.process_time()
   print('The number density is ' + str(N/r**2) + ' 1/nm^2.')
   m=18; # Mass in a.m.u.
@@ -13,8 +20,6 @@ def dynamics2D(N,r,Temp,times,fixed_T):
   Aw=180000 # kJ/mol Particle-wall repulsion Aw*exp(-dq/B)
   Aa=180000 # kJ/mol Particle-Particle repulsion Aa*exp(-dq/B)
   B=0.025 # nm 
-  # fixed_T=0 # Use fixed temperature when 1
-  fast=0 # Make plots every timestep spaced by fast (0 is no plots)
   N=int(np.floor(np.sqrt(N))**2) # Make number of particels a square number
   q=sr.roster(N,r) 
   Epot=sr.find_energy(q,r,N,Aw,Aa,B)
@@ -49,7 +54,6 @@ def dynamics2D(N,r,Temp,times,fixed_T):
     if (time % 10==0):
       ps=np.append(ps,p,axis=0)
     if (fixed_T==1):
-       x=1
        p=sr.scale_velocity(N,p,m,Temp)
     # Plot microstate
     if (fast>0 and time%fast==0):
@@ -66,14 +70,14 @@ def dynamics2D(N,r,Temp,times,fixed_T):
 
 # Settings
 # Number of atoms, size of box, temperature, length of trajectory, fixed T
-#dynamics2D(1,30,300,1000,0)
-#dynamics2D(81,30,300,10000,0)
-#dynamics2D(81,30,300,10000,1)
-dynamics2D(900,30,310,10000,1)
-#dynamics2D(900,30,300,10000,1)
-#dynamics2D(900,30*np.sqrt(1.0/0.1),300,10000,1)
-#dynamics2D(900,30*np.sqrt(1.0/0.4),300,10000,1)
-#dynamics2D(900,30*np.sqrt(1.0/0.7),300,10000,1)
-#dynamics2D(900,30*np.sqrt(1.0/10),300,10000,1)
-#dynamics2D(900,30*np.sqrt(1.0/3),300,10000,1)
-#dynamics2D(900,30*np.sqrt(1.0/1.5),300,10000,1)
+#dynamics2D(1,30,300,10000,0,100) # Single particle demonstration
+dynamics2D(81,30,300,10000,0,100) # Small box demonstration
+#dynamics2D(81,30,300,10000,1,100) # We fix temperature
+#dynamics2D(900,30,300,10000,1,100) # Larger density
+#dynamics2D(900,30,310,10000,1,100) # Larger density different temperature
+#dynamics2D(900,30*np.sqrt(1.0/0.1),300,10000,1,0) # Runs with different density
+#dynamics2D(900,30*np.sqrt(1.0/0.4),300,10000,1,0)
+#dynamics2D(900,30*np.sqrt(1.0/0.7),300,10000,1,0)
+#dynamics2D(900,30*np.sqrt(1.0/10),300,10000,1,0)
+#dynamics2D(900,30*np.sqrt(1.0/3),300,10000,1,0)
+#dynamics2D(900,30*np.sqrt(1.0/1.5),300,10000,1,0)

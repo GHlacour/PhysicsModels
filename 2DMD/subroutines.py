@@ -91,7 +91,7 @@ def plot_state(q,r):
   plt.xlabel('x-axis (nm)',fontsize=18)
   plt.ylabel('y-axis (nm)',fontsize=18)
   plt.draw()
-  plt.pause(0.000001)
+  plt.pause(0.0000001)
 
 # Plot physical variables
 def plot_variables(t,Epot,Ekin,P,R,V,N):
@@ -116,7 +116,7 @@ def plot_variables(t,Epot,Ekin,P,R,V,N):
   PVNRT=P*V/N/R/T
   plt.plot(t,PVNRT) 
   plt.xlabel('Time (ps)',fontsize=18)
-  plt.ylabel('PVNRT',fontsize=18)
+  plt.ylabel('PV/NRT',fontsize=18)
   plt.subplot(2,2,4)
   plt.plot(t,Ekin+Epot)
   plt.xlabel('Time (ps)',fontsize=18)
@@ -140,7 +140,7 @@ def plot_variables(t,Epot,Ekin,P,R,V,N):
   plt.subplot(2,2,3)
   plt.hist(PVNRT[start:],100)
   plt.xlabel('PVNRT',fontsize=18)
-  mytext='<PVNRT>=%.2f $\pm$ %.2f' %(np.mean(PVNRT[start:]),np.std(PVNRT[start:]))
+  mytext='<PV/NRT>=%.2f $\pm$ %.2f' %(np.mean(PVNRT[start:]),np.std(PVNRT[start:]))
   plt.title(mytext)
   plt.subplot(2,2,4)
   E=Ekin+Epot
