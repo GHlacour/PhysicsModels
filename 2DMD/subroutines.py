@@ -42,7 +42,6 @@ def scale_velocity(N,p,m,Temp):
   R=8.3144598e-3 # J/mol/K Gas constant
   Ekin=find_kinetic(p,m)
   Ekin0=2*N*R*Temp/2
-#  print(str(Ekin) +' '+ str(Ekin0)+' '+str(N))
 # Scale momenta
   p=p*np.sqrt(Ekin0/Ekin)
   return p
@@ -139,7 +138,7 @@ def plot_variables(t,Epot,Ekin,P,R,V,N):
   plt.title(mytext)
   plt.subplot(2,2,3)
   plt.hist(PVNRT[start:],100)
-  plt.xlabel('PVNRT',fontsize=18)
+  plt.xlabel('PV/NRT',fontsize=18)
   mytext='<PV/NRT>=%.2f $\pm$ %.2f' %(np.mean(PVNRT[start:]),np.std(PVNRT[start:]))
   plt.title(mytext)
   plt.subplot(2,2,4)

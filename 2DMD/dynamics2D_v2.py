@@ -71,9 +71,9 @@ def dynamics2D(N,r,Temp,times,fixed_T,fast):
 # Settings
 # Number of atoms, size of box, temperature, length of trajectory, fixed T
 #dynamics2D(1,30,300,10000,0,100) # Single particle demonstration
-dynamics2D(81,30,300,10000,0,100) # Small box demonstration
-#dynamics2D(81,30,300,10000,1,100) # We fix temperature
-#dynamics2D(900,30,300,10000,1,100) # Larger density
+#dynamics2D(81,30,300,10000,0,100) # Small box demonstration
+#dynamics2D(81,30,300,150000,1,100) # We fix temperature
+dynamics2D(900,30,300,1000,1,0) # Larger density
 #dynamics2D(900,30,310,10000,1,100) # Larger density different temperature
 #dynamics2D(900,30*np.sqrt(1.0/0.1),300,10000,1,0) # Runs with different density
 #dynamics2D(900,30*np.sqrt(1.0/0.4),300,10000,1,0)
